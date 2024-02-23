@@ -40,13 +40,50 @@ public class RondaFragment extends Fragment {
         // Obtén la instancia de DBHelper
         dbHelper = new DBHelper(requireContext());
 
-        // Ejecutar AsyncTask para obtener la lista de descripciones_cml
-        new GetDescripcionCmlListAsyncTask().execute();
+        // Configurar el Spinner y TextView
+        setupSpinner(rootView);
 
         return rootView;
     }
 
+    private void setupSpinner(View rootView) {
+        // Obtén el Spinner y TextView
+        Spinner spinner = rootView.findViewById(R.id.spinner);
+        TextView textViewUnidadSeleccionada = rootView.findViewById(R.id.textView2);
+
+        // Ejecutar AsyncTask para obtener la lista de descripciones_cml
+        new GetDescripcionCmlListAsyncTask(spinner, textViewUnidadSeleccionada).execute();
+
+        // Configurar un OnItemSelectedListener para el Spinner
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // Obtén la descripción_cml seleccionada
+                String descripcionCmlSeleccionada = parentView.getItemAtPosition(position).toString();
+
+                // Obtén la unidad asociada de la base de datos
+                String unidadAsociada = dbHelper.obtenerUnidadAsociadaDesdeDB(descripcionCmlSeleccionada);
+
+                // Actualiza el TextView con la unidad seleccionada
+                textViewUnidadSeleccionada.setText("Unidad Seleccionada: " + unidadAsociada);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Maneja el caso en el que no se haya seleccionado nada en el Spinner (si es necesario)
+            }
+        });
+    }
+
     private class GetDescripcionCmlListAsyncTask extends AsyncTask<Void, Void, List<String>> {
+        private Spinner spinner;
+        private TextView textViewUnidadSeleccionada;
+
+        public GetDescripcionCmlListAsyncTask(Spinner spinner, TextView textViewUnidadSeleccionada) {
+            this.spinner = spinner;
+            this.textViewUnidadSeleccionada = textViewUnidadSeleccionada;
+        }
+
         @Override
         protected List<String> doInBackground(Void... voids) {
             try {
@@ -76,29 +113,7 @@ public class RondaFragment extends Fragment {
                 // Configurar el Spinner después de obtener la lista en el hilo principal
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, descripcionCmlList);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                Spinner spinner = requireView().findViewById(R.id.spinner);
                 spinner.setAdapter(adapter);
-
-                // Agregar un listener al Spinner para manejar la selección
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // Obtener la descripción_cml seleccionada
-                        String descripcionCmlSeleccionada = (String) parentView.getSelectedItem();
-
-                        // Obtener la unidad asociada desde la base de datos
-                        String unidadAsociada = dbHelper.obtenerUnidadAsociadaDesdeDB(descripcionCmlSeleccionada);
-
-                        // Actualizar el TextView con la unidad asociada
-                        TextView textViewUnidad = requireView().findViewById(R.id.textView2);
-                        textViewUnidad.setText("Unidad Seleccionada: " + unidadAsociada);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // No se necesita hacer nada aquí
-                    }
-                });
 
                 Log.d(TAG, "Spinner configurado exitosamente");
             }
