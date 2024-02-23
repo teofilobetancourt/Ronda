@@ -1,11 +1,7 @@
 package com.teoesword.myapplication.Databases;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
-import static com.teoesword.myapplication.Databases.RondaDBHelper.COLUMN_DESCRIPCION_CML;
-import static com.teoesword.myapplication.Databases.RondaDBHelper.TABLE_NAME;
-
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,8 +11,12 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.teoesword.myapplication.Databases.RondaDBHelper.COLUMN_DESCRIPCION_CML;
+import static com.teoesword.myapplication.Databases.RondaDBHelper.TABLE_NAME;
+
 public class DBHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = "DBHelper";
     private static final String DATABASE_NAME = "ronda.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Crear la tabla "ronda" con la estructura actual
-        String createTableQuery = "CREATE TABLE IF NOT EXISTS ronda " +
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " " +
                 "(fecha INTEGER, " +
                 "co_tarea TEXT, " +
                 "descripcion_tarea TEXT, " +
@@ -48,9 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        android.util.Log.v("BBDD",
-                "BD actualizándose. Se perderán los datos antiguos");
-
+        Log.v("BBDD", "BD actualizándose. Se perderán los datos antiguos");
         onCreate(db);
     }
 
@@ -64,7 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Database path: " + db.getPath());
 
         // Reemplaza "ronda" por el nombre real de tu tabla
-        Cursor cursor = db.query(TABLE_NAME , columns, null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null);
 
         try {
             if (cursor.moveToFirst()) {
@@ -83,7 +81,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return descripcionCmlList;
     }
 
-    // En tu clase DBHelper, agrega el siguiente método:
     @SuppressLint("Range")
     public String obtenerUnidadAsociadaDesdeDB(String descripcionCml) {
         String unidadAsociada = "";
@@ -106,5 +103,21 @@ public class DBHelper extends SQLiteOpenHelper {
         return unidadAsociada;
     }
 
+    public void insertarValor(String descripcionCml, String nuevoValor) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        ContentValues values = new ContentValues();
+        values.put("valor", nuevoValor);
+
+        // Actualizar el valor asociado a la descripción_cml específica
+        int numRowsAffected = db.update(TABLE_NAME, values, COLUMN_DESCRIPCION_CML + " = ?", new String[]{descripcionCml});
+
+        if (numRowsAffected == 0) {
+            // Si no se actualizó ninguna fila, entonces no existía una fila con esa descripción_cml
+            // Puedes optar por insertar una nueva fila si lo deseas
+            // db.insert(TABLE_NAME, null, values);
+        }
+
+        db.close();
+    }
 }
