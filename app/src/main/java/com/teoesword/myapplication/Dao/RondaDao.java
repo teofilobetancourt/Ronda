@@ -1,4 +1,4 @@
-package com.teoesword.myapplication.Dao;
+/* package com.teoesword.myapplication.Dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -16,3 +16,4 @@ public interface RondaDao {
     List<String> getDescripcionCmlList();
 }
 
+*/

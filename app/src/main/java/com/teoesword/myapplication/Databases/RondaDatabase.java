@@ -1,4 +1,4 @@
-package com.teoesword.myapplication.Databases;
+/*package com.teoesword.myapplication.Databases;
 
 import android.content.Context;
 
@@ -27,3 +27,4 @@ public abstract class RondaDatabase extends RoomDatabase {
     }
 }
 
+*/

@@ -1,18 +1,17 @@
 package com.teoesword.myapplication.Databases;
 
 import android.content.Context;
-
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
+import android.database.sqlite.SQLiteDatabase;
 
 public class DatabaseClient {
 
-    private final RondaDatabase rondaDatabase;
+    private final DBHelper dbHelper;
+    private SQLiteDatabase database;
 
     private static DatabaseClient instance;
 
     private DatabaseClient(Context context) {
-        rondaDatabase = Room.databaseBuilder(context, RondaDatabase.class, "ronda.db").build();
+        dbHelper = new DBHelper(context);
     }
 
     public static synchronized DatabaseClient getInstance(Context context) {
@@ -22,7 +21,15 @@ public class DatabaseClient {
         return instance;
     }
 
-    public RondaDatabase getRondaDatabase() {
-        return rondaDatabase;
+    public void open() {
+        database = dbHelper.getWritableDatabase();
+    }
+
+    public void close() {
+        dbHelper.close();
+    }
+
+    public SQLiteDatabase getDatabase() {
+        return database;
     }
 }

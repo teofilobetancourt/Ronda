@@ -1,4 +1,4 @@
-package com.teoesword.myapplication.Databases;
+/* package com.teoesword.myapplication.Databases;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -137,3 +137,4 @@ public class RondaEntity {
         this.unit = unit;
     }
 }
+*/

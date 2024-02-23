@@ -1,5 +1,6 @@
 package com.teoesword.myapplication.Fragment;
 
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,20 +10,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.teoesword.myapplication.Dao.RondaDao;
-import com.teoesword.myapplication.Databases.DatabaseClient;
+import com.teoesword.myapplication.Databases.DBHelper;
 import com.teoesword.myapplication.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RondaFragment extends Fragment {
 
     private static final String TAG = "RondaFragment";
-    private RondaDao rondaDao;
+    private DBHelper dbHelper;
 
     // Constructor vacío requerido
     public RondaFragment() {
@@ -36,8 +35,8 @@ public class RondaFragment extends Fragment {
 
         // Configurar las vistas y manejar eventos aquí si es necesario
 
-        // Obtén la instancia del DAO de la base de datos
-        rondaDao = DatabaseClient.getInstance(requireContext()).getRondaDatabase().rondaDao();
+        // Obtén la instancia de DBHelper
+        dbHelper = new DBHelper(requireContext());
 
         // Ejecutar AsyncTask para obtener la lista de descripciones_cml
         new GetDescripcionCmlListAsyncTask().execute();
@@ -48,14 +47,21 @@ public class RondaFragment extends Fragment {
     private class GetDescripcionCmlListAsyncTask extends AsyncTask<Void, Void, List<String>> {
         @Override
         protected List<String> doInBackground(Void... voids) {
-            // Obtén la lista de descripciones_cml en un hilo en segundo plano
-            return rondaDao.getDescripcionCmlList();
+            try {
+                // Obtener la lista de descripciones_cml en un hilo en segundo plano
+                List<String> descripcionCmlList = dbHelper.getDescripcionCmlList();
+
+                // Log para verificar la lista obtenida
+                Log.d(TAG, "Lista obtenida: " + descripcionCmlList);
+
+                return descripcionCmlList;
+            } catch (Exception e) {
+                Log.e(TAG, "Error al obtener la lista de descripciones_cml", e);
+                return new ArrayList<>();
+            }
         }
 
-
-
         @Override
-
         protected void onPostExecute(List<String> descripcionCmlList) {
             super.onPostExecute(descripcionCmlList);
 
@@ -74,6 +80,6 @@ public class RondaFragment extends Fragment {
                 Log.d(TAG, "Spinner configurado exitosamente");
             }
         }
-
     }
+
 }
