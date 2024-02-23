@@ -7,8 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
@@ -77,9 +79,29 @@ public class RondaFragment extends Fragment {
                 Spinner spinner = requireView().findViewById(R.id.spinner);
                 spinner.setAdapter(adapter);
 
+                // Agregar un listener al Spinner para manejar la selección
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Obtener la descripción_cml seleccionada
+                        String descripcionCmlSeleccionada = (String) parentView.getSelectedItem();
+
+                        // Obtener la unidad asociada desde la base de datos
+                        String unidadAsociada = dbHelper.obtenerUnidadAsociadaDesdeDB(descripcionCmlSeleccionada);
+
+                        // Actualizar el TextView con la unidad asociada
+                        TextView textViewUnidad = requireView().findViewById(R.id.textView2);
+                        textViewUnidad.setText("Unidad Seleccionada: " + unidadAsociada);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // No se necesita hacer nada aquí
+                    }
+                });
+
                 Log.d(TAG, "Spinner configurado exitosamente");
             }
         }
     }
-
 }

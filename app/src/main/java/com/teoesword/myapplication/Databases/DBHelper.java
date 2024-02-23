@@ -5,6 +5,7 @@ import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import static com.teoesword.myapplication.Databases.RondaDBHelper.COLUMN_DESCRIPCION_CML;
 import static com.teoesword.myapplication.Databases.RondaDBHelper.TABLE_NAME;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -63,7 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Database path: " + db.getPath());
 
         // Reemplaza "ronda" por el nombre real de tu tabla
-        Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_NAME , columns, null, null, null, null, null);
 
         try {
             if (cursor.moveToFirst()) {
@@ -81,5 +82,29 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return descripcionCmlList;
     }
+
+    // En tu clase DBHelper, agrega el siguiente método:
+    @SuppressLint("Range")
+    public String obtenerUnidadAsociadaDesdeDB(String descripcionCml) {
+        String unidadAsociada = "";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {"unit"}; // Reemplaza "unidad_columna" con el nombre real de la columna de unidades
+
+        // Realiza una consulta para obtener la unidad asociada a la descripción_cml seleccionada
+        Cursor cursor = db.query(TABLE_NAME, columns, COLUMN_DESCRIPCION_CML + " = ?", new String[]{descripcionCml}, null, null, null);
+
+        // Verifica si hay al menos una fila en el cursor
+        if (cursor.moveToFirst()) {
+            unidadAsociada = cursor.getString(cursor.getColumnIndex("unit")); // Reemplaza "unidad_columna" con el nombre real de la columna de unidades
+        }
+
+        // Cierra el cursor y la base de datos
+        cursor.close();
+        db.close();
+
+        return unidadAsociada;
+    }
+
 
 }
