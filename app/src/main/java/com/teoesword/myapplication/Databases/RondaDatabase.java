@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.teoesword.myapplication.Dao.RondaDao;
 
-@Database(entities = {RondaEntity.class}, version = 2, exportSchema = false)
+@Database(entities = {RondaEntity.class}, version = 1, exportSchema = false)
 public abstract class RondaDatabase extends RoomDatabase {
 
     public abstract RondaDao rondaDao();

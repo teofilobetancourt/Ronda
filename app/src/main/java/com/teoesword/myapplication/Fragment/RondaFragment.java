@@ -55,6 +55,7 @@ public class RondaFragment extends Fragment {
 
 
         @Override
+
         protected void onPostExecute(List<String> descripcionCmlList) {
             super.onPostExecute(descripcionCmlList);
 
@@ -62,6 +63,8 @@ public class RondaFragment extends Fragment {
             if (descripcionCmlList.isEmpty()) {
                 Log.d(TAG, "La lista de descripciones está vacía");
             } else {
+                Log.d(TAG, "Tamaño de la lista de descripciones: " + descripcionCmlList.size());
+
                 // Configurar el Spinner después de obtener la lista en el hilo principal
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, descripcionCmlList);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -71,5 +74,6 @@ public class RondaFragment extends Fragment {
                 Log.d(TAG, "Spinner configurado exitosamente");
             }
         }
+
     }
 }
