@@ -21,6 +21,7 @@ import com.teoesword.myapplication.Databases.DBHelper;
 import com.teoesword.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RondaFragment extends Fragment {
@@ -44,7 +45,7 @@ public class RondaFragment extends Fragment {
         TextView textViewUnidadSeleccionada = rootView.findViewById(R.id.textView2);
 
         // Configurar el Spinner y el TextView
-        setupSpinner(rootView);
+        setupSpinner(rootView, spinner, textViewUnidadSeleccionada);
 
         // Agrega un OnClickListener al botón "Aceptar" para manejar el clic
         Button btnAceptar = rootView.findViewById(R.id.btnAceptar);
@@ -67,7 +68,12 @@ public class RondaFragment extends Fragment {
         if (!valorIngresado.isEmpty()) {
             // Obtiene la descripción_cml seleccionada en el Spinner
             Spinner spinner = requireView().findViewById(R.id.spinner);
-            String descripcionCmlSeleccionada = (String) spinner.getSelectedItem();
+            String selectedItem = (String) spinner.getSelectedItem();
+
+            // Dividir el elemento seleccionado en id_cml y descripcion_cml
+            String[] parts = selectedItem.split(" - ");
+            String idCmlSeleccionado = parts[0];
+            String descripcionCmlSeleccionada = parts[1];
 
             // Actualiza el valor en la base de datos solo para la descripción_cml seleccionada
             dbHelper.insertarValor(descripcionCmlSeleccionada, valorIngresado);
@@ -84,33 +90,9 @@ public class RondaFragment extends Fragment {
     }
 
 
-    private void setupSpinner(View rootView) {
-        // Obtén el Spinner y TextView
-        Spinner spinner = rootView.findViewById(R.id.spinner);
-        TextView textViewUnidadSeleccionada = rootView.findViewById(R.id.textView2);
-
+    private void setupSpinner(View rootView, Spinner spinner, TextView textViewUnidadSeleccionada) {
         // Ejecutar AsyncTask para obtener la lista de descripciones_cml
         new GetDescripcionCmlListAsyncTask(spinner, textViewUnidadSeleccionada).execute();
-
-        // Configurar un OnItemSelectedListener para el Spinner
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // Obtén la descripción_cml seleccionada
-                String descripcionCmlSeleccionada = parentView.getItemAtPosition(position).toString();
-
-                // Obtén la unidad asociada de la base de datos
-                String unidadAsociada = dbHelper.obtenerUnidadAsociadaDesdeDB(descripcionCmlSeleccionada);
-
-                // Actualiza el TextView con la unidad seleccionada
-                textViewUnidadSeleccionada.setText("Unidad Seleccionada: " + unidadAsociada);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // Maneja el caso en el que no se haya seleccionado nada en el Spinner (si es necesario)
-            }
-        });
     }
 
     private class GetDescripcionCmlListAsyncTask extends AsyncTask<Void, Void, List<String>> {
@@ -127,12 +109,20 @@ public class RondaFragment extends Fragment {
         protected List<String> doInBackground(Void... voids) {
             try {
                 // Obtener la lista de descripciones_cml en un hilo en segundo plano
-                List<String> descripcionCmlList = dbHelper.getDescripcionCmlList();
+                List<HashMap<String, String>> cmlList = dbHelper.getCmlListWithIdAndDescription();
 
                 // Log para verificar la lista obtenida
-                Log.d(TAG, "Lista obtenida: " + descripcionCmlList);
+                Log.d(TAG, "Lista obtenida: " + cmlList);
 
-                return descripcionCmlList;
+                List<String> displayList = new ArrayList<>();
+
+                for (HashMap<String, String> cmlMap : cmlList) {
+                    // Formatear cada elemento como "id_cml - descripcion_cml"
+                    String displayItem = cmlMap.get("id_cml") + " - " + cmlMap.get("descripcion_cml");
+                    displayList.add(displayItem);
+                }
+
+                return displayList;
             } catch (Exception e) {
                 Log.e(TAG, "Error al obtener la lista de descripciones_cml", e);
                 return new ArrayList<>();
@@ -159,7 +149,12 @@ public class RondaFragment extends Fragment {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                         // Obtener la descripción_cml seleccionada
-                        String descripcionCmlSeleccionada = (String) parentView.getSelectedItem();
+                        String selectedItem = (String) parentView.getSelectedItem();
+
+                        // Dividir el elemento seleccionado en id_cml y descripcion_cml
+                        String[] parts = selectedItem.split(" - ");
+                        String idCmlSeleccionado = parts[0];
+                        String descripcionCmlSeleccionada = parts[1];
 
                         // Obtener la unidad asociada desde la base de datos
                         String unidadAsociada = dbHelper.obtenerUnidadAsociadaDesdeDB(descripcionCmlSeleccionada);

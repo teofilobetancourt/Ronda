@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.teoesword.myapplication.Databases.RondaDBHelper.COLUMN_DESCRIPCION_CML;
@@ -120,4 +122,36 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.close();
     }
+    public List<HashMap<String, String>> getCmlListWithIdAndDescription() {
+        List<HashMap<String, String>> cmlListWithIdAndDescription = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {"id_cml", COLUMN_DESCRIPCION_CML}; // Agrega el id_cml y la descripción_cml
+
+        // Reemplaza "ronda" por el nombre real de tu tabla
+        Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    // Obtén el id_cml y la descripción_cml de cada fila
+                    @SuppressLint("Range") int idCml = cursor.getInt(cursor.getColumnIndex("id_cml"));
+                    @SuppressLint("Range") String descripcionCml = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPCION_CML));
+
+                    // Crea un HashMap con el id_cml y la descripción_cml y agrégalo a la lista
+                    HashMap<String, String> cmlMap = new HashMap<>();
+                    cmlMap.put("id_cml", String.valueOf(idCml));
+                    cmlMap.put("descripcion_cml", descripcionCml);
+                    cmlListWithIdAndDescription.add(cmlMap);
+
+                    // Imprime cada valor (puedes comentar esto después de verificar)
+                    Log.d(TAG, "ID_CML: " + idCml + ", DescripcionCml value: " + descripcionCml);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return cmlListWithIdAndDescription;
+    }
+
 }
