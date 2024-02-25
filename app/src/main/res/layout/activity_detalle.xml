@@ -1,0 +1,98 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewFecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha: "
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textViewCoTarea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Co Tarea: "/>
+
+    <TextView
+        android:id="@+id/textViewDescripcionTarea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descripción Tarea: "/>
+
+    <TextView
+        android:id="@+id/textViewIdGrupoRonda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ID Grupo Ronda: "/>
+
+    <TextView
+        android:id="@+id/textViewDescripcionGrupoRonda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descripción Grupo Ronda: "/>
+
+    <TextView
+        android:id="@+id/textViewSecuenciaGrupo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Secuencia Grupo: "/>
+
+    <TextView
+        android:id="@+id/textViewIdCml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ID CML: "/>
+
+    <TextView
+        android:id="@+id/textViewEquipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Equipo: "/>
+
+    <TextView
+        android:id="@+id/textViewTagEquipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tag Equipo: "/>
+
+    <TextView
+        android:id="@+id/textViewUtSistema"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UT Sistema: "/>
+
+    <TextView
+        android:id="@+id/textViewDescripcionCml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descripción CML: "/>
+
+    <TextView
+        android:id="@+id/textViewSecuenciaCml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Secuencia CML: "/>
+
+    <TextView
+        android:id="@+id/textViewValor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valor: "/>
+
+    <TextView
+        android:id="@+id/textViewUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Unidad: "/>
+
+    <Button
+        android:id="@+id/btnCerrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cerrar"/>
+</LinearLayout>

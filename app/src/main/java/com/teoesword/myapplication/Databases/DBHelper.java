@@ -154,4 +154,34 @@ public class DBHelper extends SQLiteOpenHelper {
         return cmlListWithIdAndDescription;
     }
 
+    @SuppressLint("Range")
+    public HashMap<String, String> obtenerDatosAsociados(String descripcionCml) {
+        HashMap<String, String> datosAsociados = new HashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Especifica las columnas que deseas obtener
+        String[] columns = {"fecha", "co_tarea", "descripcion_tarea", "id_grupo_ronda", "descripcion_grupo_ronda",
+                "secuencia_grupo", "id_cml", "equipo", "tag_equipo", "ut_sistema", "descripcion_cml", "secuencia_cml",
+                "valor", "unit"};
+
+        // Realiza una consulta para obtener los datos asociados a la descripción_cml seleccionada
+        Cursor cursor = db.query(TABLE_NAME, columns, COLUMN_DESCRIPCION_CML + " = ?", new String[]{descripcionCml},
+                null, null, null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                // Itera a través de las columnas y agrega los datos al HashMap
+                for (String column : columns) {
+                    datosAsociados.put(column, cursor.getString(cursor.getColumnIndex(column)));
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        db.close();
+        return datosAsociados;
+    }
+
+
 }

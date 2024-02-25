@@ -32,7 +32,7 @@
         android:layout_below="@id/spinner"
         android:ems="10"
         android:hint="Agregar Valor"
-        android:inputType="text"
+        android:inputType="number"
         android:minHeight="48dp"
         android:textColorHint="#A1887F"
         android:layout_marginStart="16dp"

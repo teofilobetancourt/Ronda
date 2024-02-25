@@ -1,6 +1,6 @@
 package com.teoesword.myapplication.Fragment;
 
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.teoesword.myapplication.Activity.DetalleActivity;
 import com.teoesword.myapplication.Databases.DBHelper;
 import com.teoesword.myapplication.R;
 
@@ -56,6 +58,58 @@ public class RondaFragment extends Fragment {
             }
         });
 
+        // Configurar el botón flotante para abrir DetalleActivity
+        FloatingActionButton fab = rootView.findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(view -> {
+            // Obtén la descripción_cml seleccionada en el Spinner
+            Spinner spinner1 = rootView.findViewById(R.id.spinner);
+            String descripcionCmlSeleccionada = (String) spinner1.getSelectedItem();
+
+            // Obtén todos los datos asociados a la descripción_cml seleccionada desde tu base de datos
+            HashMap<String, String> datosAsociados = obtenerDatosAsociados(descripcionCmlSeleccionada);
+
+            // Verifica si se encontraron datos asociados
+            if (!datosAsociados.isEmpty()) {
+                // Obtén los datos específicos de la base de datos en el orden correcto
+                String fecha = datosAsociados.get("fecha");
+                String coTarea = datosAsociados.get("co_tarea");
+                String descripcionTarea = datosAsociados.get("descripcion_tarea");
+                String idGrupoRonda = datosAsociados.get("id_grupo_ronda");
+                String descripcionGrupoRonda = datosAsociados.get("descripcion_grupo_ronda");
+                String secuenciaGrupo = datosAsociados.get("secuencia_grupo");
+                String idCml = datosAsociados.get("id_cml");
+                String equipo = datosAsociados.get("equipo");
+                String tagEquipo = datosAsociados.get("tag_equipo");
+                String utSistema = datosAsociados.get("ut_sistema");
+                String descripcionCml = datosAsociados.get("descripcion_cml");
+                String secuenciaCml = datosAsociados.get("secuencia_cml");
+                String valor = datosAsociados.get("valor");
+                String unit = datosAsociados.get("unit");
+
+                // Inicia DetalleActivity y pasa todos los datos necesarios como extras
+                Intent intent = new Intent(getActivity(), DetalleActivity.class);
+                intent.putExtra("id_cml", idCml);
+                intent.putExtra("descripcion_cml", descripcionCml);
+                intent.putExtra("fecha", fecha);
+                intent.putExtra("co_tarea", coTarea);
+                intent.putExtra("descripcion_tarea", descripcionTarea);
+                intent.putExtra("id_grupo_ronda", idGrupoRonda);
+                intent.putExtra("descripcion_grupo_ronda", descripcionGrupoRonda);
+                intent.putExtra("secuencia_grupo", secuenciaGrupo);
+                intent.putExtra("equipo", equipo);
+                intent.putExtra("tag_equipo", tagEquipo);
+                intent.putExtra("ut_sistema", utSistema);
+                intent.putExtra("secuencia_cml", secuenciaCml);
+                intent.putExtra("valor", valor);
+                intent.putExtra("unit", unit);
+
+                startActivity(intent);
+            } else {
+                // Manejar el caso en el que no se encontraron datos asociados
+                Toast.makeText(getActivity(), "No se encontraron datos para la descripción seleccionada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return rootView;
     }
 
@@ -89,7 +143,6 @@ public class RondaFragment extends Fragment {
         }
     }
 
-
     private void setupSpinner(View rootView, Spinner spinner, TextView textViewUnidadSeleccionada) {
         // Ejecutar AsyncTask para obtener la lista de descripciones_cml
         new GetDescripcionCmlListAsyncTask(spinner, textViewUnidadSeleccionada).execute();
@@ -117,9 +170,9 @@ public class RondaFragment extends Fragment {
                 List<String> displayList = new ArrayList<>();
 
                 for (HashMap<String, String> cmlMap : cmlList) {
-                    // Formatear cada elemento como "id_cml - descripcion_cml"
-                    String displayItem = cmlMap.get("id_cml") + " - " + cmlMap.get("descripcion_cml");
-                    displayList.add(displayItem);
+                    // Añadir directamente la descripción_cml a la lista
+                    String descripcionCml = cmlMap.get("descripcion_cml");
+                    displayList.add(descripcionCml);
                 }
 
                 return displayList;
@@ -149,18 +202,17 @@ public class RondaFragment extends Fragment {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                         // Obtener la descripción_cml seleccionada
-                        String selectedItem = (String) parentView.getSelectedItem();
-
-                        // Dividir el elemento seleccionado en id_cml y descripcion_cml
-                        String[] parts = selectedItem.split(" - ");
-                        String idCmlSeleccionado = parts[0];
-                        String descripcionCmlSeleccionada = parts[1];
+                        String descripcionCmlSeleccionada = (String) parentView.getSelectedItem();
 
                         // Obtener la unidad asociada desde la base de datos
                         String unidadAsociada = dbHelper.obtenerUnidadAsociadaDesdeDB(descripcionCmlSeleccionada);
 
                         // Actualizar el TextView con la unidad asociada
                         textViewUnidadSeleccionada.setText("Unidad Seleccionada: " + unidadAsociada);
+
+                        // Agregar logs para depuración
+                        Log.d(TAG, "Descripción_cml seleccionada: " + descripcionCmlSeleccionada);
+                        Log.d(TAG, "Unidad asociada: " + unidadAsociada);
                     }
 
                     @Override
@@ -172,5 +224,24 @@ public class RondaFragment extends Fragment {
                 Log.d(TAG, "Spinner configurado exitosamente");
             }
         }
+    }
+
+
+    private HashMap<String, String> obtenerDatosAsociados(String descripcionCml) {
+        HashMap<String, String> datosAsociados = new HashMap<>();
+        try {
+            // Obtener los datos asociados a la descripción_cml seleccionada
+            datosAsociados = dbHelper.obtenerDatosAsociados(descripcionCml);
+
+            // Agregar logs para depuración
+            if (!datosAsociados.isEmpty()) {
+                Log.d(TAG, "Datos asociados encontrados: " + datosAsociados);
+            } else {
+                Log.d(TAG, "No se encontraron datos asociados para la descripción_cml: " + descripcionCml);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error al obtener datos asociados", e);
+        }
+        return datosAsociados;
     }
 }
