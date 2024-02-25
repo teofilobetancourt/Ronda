@@ -226,7 +226,6 @@ public class RondaFragment extends Fragment {
         }
     }
 
-
     private HashMap<String, String> obtenerDatosAsociados(String descripcionCml) {
         HashMap<String, String> datosAsociados = new HashMap<>();
         try {
