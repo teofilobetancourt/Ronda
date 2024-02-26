@@ -63,50 +63,66 @@ public class RondaFragment extends Fragment {
         fab.setOnClickListener(view -> {
             // Obtén la descripción_cml seleccionada en el Spinner
             Spinner spinner1 = rootView.findViewById(R.id.spinner);
-            String descripcionCmlSeleccionada = (String) spinner1.getSelectedItem();
+            String selectedItem = (String) spinner1.getSelectedItem();
 
-            // Obtén todos los datos asociados a la descripción_cml seleccionada desde tu base de datos
-            HashMap<String, String> datosAsociados = obtenerDatosAsociados(descripcionCmlSeleccionada);
+            // Verifica si hay elementos seleccionados en el Spinner
+            if (selectedItem != null) {
+                // Dividir el elemento seleccionado en id_cml y descripcion_cml
+                String[] parts = selectedItem.split(" - ");
+                if (parts.length == 2) {
+                    String idCmlSeleccionado = parts[0];
+                    String descripcionCmlSeleccionada = parts[1];
 
-            // Verifica si se encontraron datos asociados
-            if (!datosAsociados.isEmpty()) {
-                // Obtén los datos específicos de la base de datos en el orden correcto
-                String fecha = datosAsociados.get("fecha");
-                String coTarea = datosAsociados.get("co_tarea");
-                String descripcionTarea = datosAsociados.get("descripcion_tarea");
-                String idGrupoRonda = datosAsociados.get("id_grupo_ronda");
-                String descripcionGrupoRonda = datosAsociados.get("descripcion_grupo_ronda");
-                String secuenciaGrupo = datosAsociados.get("secuencia_grupo");
-                String idCml = datosAsociados.get("id_cml");
-                String equipo = datosAsociados.get("equipo");
-                String tagEquipo = datosAsociados.get("tag_equipo");
-                String utSistema = datosAsociados.get("ut_sistema");
-                String descripcionCml = datosAsociados.get("descripcion_cml");
-                String secuenciaCml = datosAsociados.get("secuencia_cml");
-                String valor = datosAsociados.get("valor");
-                String unit = datosAsociados.get("unit");
+                    // Obtén todos los datos asociados a la descripción_cml seleccionada desde tu base de datos
+                    HashMap<String, String> datosAsociados = obtenerDatosAsociados(descripcionCmlSeleccionada);
 
-                // Inicia DetalleActivity y pasa todos los datos necesarios como extras
-                Intent intent = new Intent(getActivity(), DetalleActivity.class);
-                intent.putExtra("id_cml", idCml);
-                intent.putExtra("descripcion_cml", descripcionCml);
-                intent.putExtra("fecha", fecha);
-                intent.putExtra("co_tarea", coTarea);
-                intent.putExtra("descripcion_tarea", descripcionTarea);
-                intent.putExtra("id_grupo_ronda", idGrupoRonda);
-                intent.putExtra("descripcion_grupo_ronda", descripcionGrupoRonda);
-                intent.putExtra("secuencia_grupo", secuenciaGrupo);
-                intent.putExtra("equipo", equipo);
-                intent.putExtra("tag_equipo", tagEquipo);
-                intent.putExtra("ut_sistema", utSistema);
-                intent.putExtra("secuencia_cml", secuenciaCml);
-                intent.putExtra("valor", valor);
-                intent.putExtra("unit", unit);
+                    // Verifica si se encontraron datos asociados
+                    if (!datosAsociados.isEmpty()) {
+                        // Obtén los datos específicos de la base de datos en el orden correcto
+                        String fecha = datosAsociados.get("fecha");
+                        String coTarea = datosAsociados.get("co_tarea");
+                        String descripcionTarea = datosAsociados.get("descripcion_tarea");
+                        String idGrupoRonda = datosAsociados.get("id_grupo_ronda");
+                        String descripcionGrupoRonda = datosAsociados.get("descripcion_grupo_ronda");
+                        String secuenciaGrupo = datosAsociados.get("secuencia_grupo");
+                        String idCml = datosAsociados.get("id_cml");
+                        String equipo = datosAsociados.get("equipo");
+                        String tagEquipo = datosAsociados.get("tag_equipo");
+                        String utSistema = datosAsociados.get("ut_sistema");
+                        String descripcionCml = datosAsociados.get("descripcion_cml");
+                        String secuenciaCml = datosAsociados.get("secuencia_cml");
+                        String valor = datosAsociados.get("valor");
+                        String unit = datosAsociados.get("unit");
 
-                startActivity(intent);
+                        // Inicia DetalleActivity y pasa todos los datos necesarios como extras
+                        Intent intent = new Intent(getActivity(), DetalleActivity.class);
+                        intent.putExtra("id_cml", idCml);
+                        intent.putExtra("descripcion_cml", descripcionCml);
+                        intent.putExtra("fecha", fecha);
+                        intent.putExtra("co_tarea", coTarea);
+                        intent.putExtra("descripcion_tarea", descripcionTarea);
+                        intent.putExtra("id_grupo_ronda", idGrupoRonda);
+                        intent.putExtra("descripcion_grupo_ronda", descripcionGrupoRonda);
+                        intent.putExtra("secuencia_grupo", secuenciaGrupo);
+                        intent.putExtra("equipo", equipo);
+                        intent.putExtra("tag_equipo", tagEquipo);
+                        intent.putExtra("ut_sistema", utSistema);
+                        intent.putExtra("secuencia_cml", secuenciaCml);
+                        intent.putExtra("valor", valor);
+                        intent.putExtra("unit", unit);
+
+                        startActivity(intent);
+                    } else {
+                        // Manejar el caso en el que no se encontraron datos asociados
+                        Toast.makeText(getActivity(), "No se encontraron datos para la descripción seleccionada", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Manejar el caso en el que el formato del elemento seleccionado no es el esperado
+                    Toast.makeText(getActivity(), "Error en el formato del elemento seleccionado", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                // Manejar el caso en el que no se encontraron datos asociados
-                Toast.makeText(getActivity(), "No se encontraron datos para la descripción seleccionada", Toast.LENGTH_SHORT).show();
+                // Manejar el caso en el que no hay elementos seleccionados en el Spinner
+                Toast.makeText(getActivity(), "No hay elementos seleccionados en el Spinner", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -124,19 +140,30 @@ public class RondaFragment extends Fragment {
             Spinner spinner = requireView().findViewById(R.id.spinner);
             String selectedItem = (String) spinner.getSelectedItem();
 
-            // Dividir el elemento seleccionado en id_cml y descripcion_cml
-            String[] parts = selectedItem.split(" - ");
-            String idCmlSeleccionado = parts[0];
-            String descripcionCmlSeleccionada = parts[1];
+            // Verifica si hay elementos seleccionados en el Spinner
+            if (selectedItem != null) {
+                // Dividir el elemento seleccionado en id_cml y descripcion_cml
+                String[] parts = selectedItem.split(" - ");
+                if (parts.length == 2) {
+                    String idCmlSeleccionado = parts[0];
+                    String descripcionCmlSeleccionada = parts[1];
 
-            // Actualiza el valor en la base de datos solo para la descripción_cml seleccionada
-            dbHelper.insertarValor(descripcionCmlSeleccionada, valorIngresado);
+                    // Actualiza el valor en la base de datos solo para la descripción_cml seleccionada
+                    dbHelper.insertarValor(descripcionCmlSeleccionada, valorIngresado);
 
-            // Limpia el EditText después de agregar el valor
-            editText.getText().clear();
+                    // Limpia el EditText después de agregar el valor
+                    editText.getText().clear();
 
-            // Puedes mostrar un mensaje de éxito al usuario si lo deseas
-            Toast.makeText(requireContext(), "Valor actualizado con éxito", Toast.LENGTH_SHORT).show();
+                    // Puedes mostrar un mensaje de éxito al usuario si lo deseas
+                    Toast.makeText(requireContext(), "Valor actualizado con éxito", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Manejar el caso en que el formato del elemento seleccionado no es el esperado
+                    Toast.makeText(requireContext(), "Error en el formato del elemento seleccionado", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Manejar el caso en el que no hay elementos seleccionados en el Spinner
+                Toast.makeText(requireContext(), "No hay elementos seleccionados en el Spinner", Toast.LENGTH_SHORT).show();
+            }
         } else {
             // Muestra un mensaje si no se ingresó ningún valor
             Toast.makeText(requireContext(), "Ingrese un valor antes de actualizar", Toast.LENGTH_SHORT).show();
@@ -167,15 +194,16 @@ public class RondaFragment extends Fragment {
                 // Log para verificar la lista obtenida
                 Log.d(TAG, "Lista obtenida: " + cmlList);
 
-                List<String> displayList = new ArrayList<>();
-
+                List<String> formattedList = new ArrayList<>();
                 for (HashMap<String, String> cmlMap : cmlList) {
-                    // Añadir directamente la descripción_cml a la lista
+                    // Formatear cada elemento antes de agregarlo a la lista
+                    String idCml = cmlMap.get("id_cml");
                     String descripcionCml = cmlMap.get("descripcion_cml");
-                    displayList.add(descripcionCml);
+                    String formattedItem = idCml + " - " + descripcionCml;
+                    formattedList.add(formattedItem);
                 }
 
-                return displayList;
+                return formattedList;
             } catch (Exception e) {
                 Log.e(TAG, "Error al obtener la lista de descripciones_cml", e);
                 return new ArrayList<>();

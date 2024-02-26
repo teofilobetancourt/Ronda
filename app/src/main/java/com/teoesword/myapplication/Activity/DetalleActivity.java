@@ -1,4 +1,5 @@
 package com.teoesword.myapplication.Activity;
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -6,6 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.teoesword.myapplication.Fragment.RondaFragment;
 import com.teoesword.myapplication.R;
 
 public class DetalleActivity extends AppCompatActivity {
@@ -18,7 +20,6 @@ public class DetalleActivity extends AppCompatActivity {
         // Obtener los datos pasados desde la actividad anterior
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String descripcionCml = extras.getString("descripcion_cml");
             String fecha = extras.getString("fecha");
             String coTarea = extras.getString("co_tarea");
             String descripcionTarea = extras.getString("descripcion_tarea");
@@ -29,7 +30,7 @@ public class DetalleActivity extends AppCompatActivity {
             String equipo = extras.getString("equipo");
             String tagEquipo = extras.getString("tag_equipo");
             String utSistema = extras.getString("ut_sistema");
-            String descripcionCmlCompleta = extras.getString("descripcion_cml_completa");
+            String descripcionCml = extras.getString("descripcion_cml");
             String secuenciaCml = extras.getString("secuencia_cml");
             String valor = extras.getString("valor");
             String unit = extras.getString("unit");
@@ -66,7 +67,7 @@ public class DetalleActivity extends AppCompatActivity {
             textViewUtSistema.setText("UT Sistema: " + utSistema);
 
             TextView textViewDescripcionCml = findViewById(R.id.textViewDescripcionCml);
-            textViewDescripcionCml.setText("Descripción CML: " + descripcionCmlCompleta);
+            textViewDescripcionCml.setText("Descripción CML: " + descripcionCml);
 
             TextView textViewSecuenciaCml = findViewById(R.id.textViewSecuenciaCml);
             textViewSecuenciaCml.setText("Secuencia CML: " + secuenciaCml);
